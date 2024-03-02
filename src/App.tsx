@@ -1,51 +1,86 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
 
-import React from 'react';
-import { PropsWithChildren } from 'react';
+import React, {useState} from 'react';
+import type {PropsWithChildren} from 'react';
 import {
-  Image,
-  ImageSourcePropType,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
+  Image,
+  ImageSourcePropType,
+  Pressable
 } from 'react-native';
-import Diceone from '../assets/one.png'
-import Dicetwo from '../assets/two.png'
-import Dicethree from '../assets/three.png'
-import Dicefour from '../assets/four.png'
-import Dicefive from '../assets/five.png'
-import Dicesix from '../assets/six.png'
+import ReactNativeHapticFeedback from "react-native-haptic-feedback";
+
+import DiceOne from '../assets/one.png'
+import DiceTwo from '../assets/two.png'
+import DiceThree from '../assets/three.png'
+import DiceFour from '../assets/four.png'
+import DiceFive from '../assets/five.png'
+import DiceSix from '../assets/six.png'
 
 type DiceProps = PropsWithChildren<{
   imageUrl: ImageSourcePropType
-
 }>
 
+const options = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: false
+};
 
-const Dice = ({imageUrl}: DiceProps): JSX.Element =>{
-  
+const Dice = ({imageUrl}: DiceProps):JSX.Element => {
   return (
     <View>
-      <Image style={styles.diceImage} source={imageUrl}/>
+      <Image style={styles.diceImage} source={imageUrl} />
     </View>
   )
 }
 
-function App(): React.JSX.Element {
-  
+function App(): JSX.Element {
+  const [diceImage, setDiceImage] = useState<ImageSourcePropType>(DiceOne)
+
+  const rollDiceOnTap = () => {
+    let randomNumber = Math.floor(Math.random() * 6) + 1;
+
+    switch (randomNumber) {
+      case 1:
+        setDiceImage(DiceOne)
+        break;
+      case 2:
+        setDiceImage(DiceTwo)
+        break;
+      case 3:
+        setDiceImage(DiceThree)
+        break;
+      case 4:
+        setDiceImage(DiceFour)
+        break;
+      case 5:
+        setDiceImage(DiceFive)
+        break;
+      case 6:
+        setDiceImage(DiceSix)
+        break;
+    
+      default:
+        setDiceImage(DiceOne)
+        break;
+    }
+
+    ReactNativeHapticFeedback.trigger("impactLight", options);
+  }
 
   return (
-    <View>
-      <Text>HI</Text>
+    <View style={styles.container}>
+      <Dice imageUrl={diceImage} />
+      <Pressable
+      onPress={rollDiceOnTap}
+      >
+        <Text
+        style={styles.rollDiceBtnText}
+        >
+        Roll the dice
+        </Text>
+      </Pressable>
     </View>
   );
 }
@@ -76,4 +111,5 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
 });
+
 export default App;
